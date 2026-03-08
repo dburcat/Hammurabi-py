@@ -16,6 +16,7 @@ class Hammurabi:
         self.rats = 0
         self.bushels_to_feed = 0
         self.revolt = False
+        self.nofood = False
         self.begin = True
 
     def main(self):
@@ -27,7 +28,9 @@ class Hammurabi:
         self.run_game_logic()
         if not self.revolt:
             self.begin = False
-            while self.year <= 9 and not self.revolt:
+            print(self.pop >0)
+            print(not self.nofood)
+            while self.year <= 9 and not self.revolt and self.pop > 0 and not self.nofood:
                 self.year += 1
                 self.printSummary()
                 self.run_game_logic()
@@ -67,9 +70,9 @@ class Hammurabi:
             return
         self.askHowManyAcresToPlant()
         self.plagueDeaths()
-        self.harvest()
         self.grainEatenByRats()
         self.popgrowth()
+        self.harvest()
         self.newCostOfLand()
         return
 
@@ -156,6 +159,8 @@ class Hammurabi:
         if self.rand.random() < 0.15:
             self.died = self.pop // 3
             self.pop -= self.died
+        else:
+            self.died = 0
         return
     
     def starvationDeaths(self):
@@ -188,6 +193,11 @@ class Hammurabi:
         self.harvest_rate = self.rand.randint(1, 6)
         self.harv = self.harvest_rate * self.acres_to_plant
         self.bushels += self.harv
+        print(self.bushels//20)
+        print(self.pop//4)
+        input("hold")
+        if self.bushels // 20 <= self.pop // 4:
+            self.nofood = True
         return
     
     def grainEatenByRats(self):
@@ -195,6 +205,8 @@ class Hammurabi:
         if self.rand.random() < 0.4:
             self.rats = self.rand.randint(10, 30) * self.bushels // 100
             self.bushels -= self.rats
+        else:
+            self.rats = 0
         return
     
     def newCostOfLand(self):
@@ -219,12 +231,13 @@ class Hammurabi:
                 print(f"In the previous year {self.starved} people starved to death.")
             else:
                 print(f"In the previous year your kingdom's population grew by {self.newpop}.")
-            print(f"The population is now {self.pop}.")
             if self.died > 0:
                 print(f"Unfortunately, {self.died} people died in the plague.")
+            print(f"The population is now {self.pop}.")
             print(f"We harvested {self.harv} bushels at a rate of {self.harvest_rate} bushels per acre.")
             if self.rats > 0:
-                print(f"Rats destroyed {self.rats} bushels, leaving {self.bushels} bushels in storage.")
+                print(f"Rats struck back destroying {self.rats} bushels")
+            print(f"There is {self.bushels} bushels in storage.")
             print(f"The city owns {self.acres} acres of land.")
             print(f"Land is currently worth {self.land_cost} bushels per acre.")
         return
@@ -232,12 +245,22 @@ class Hammurabi:
     def finalSummary(self):
         # print a final summary of the game
         if self.revolt:
-            print("\033c\033[91mGame Over\nThe people have had enough of your rule and have overthrown you! You are kicked out of office.\033[0m")
+            print("\033c\033[91mGame Over\nYou told the people to eat cake. They said no.\nNow you have been et tu brutus \033[0m")
+            print(f"Your reign has ended after {self.year} years.")
+            print(f"{self.pop} people survived your regin and took control")
+        elif self.nofood:
+            print("\033[91mGame Over\nThe food is a lie so the people have left\033[0m")
+            print(f"Your reign has ended after {self.year} years.")
+            print(f"Your final land holdings are {self.acres} acres.")
+        elif self.pop <= 0:
+            print("\033[91mGame Over\nYou are alone with only land left\033[0m")
+            print(f"Your reign has ended after {self.year} years.")
+            print(f"Your final land holdings are {self.acres} acres.")
         else:
             print("\033c\033[92mGame Over\033[0m")
-        print(f"Your reign has ended after {self.year} years.")
-        print(f"Your final population is {self.pop}.")
-        print(f"Your final land holdings are {self.acres} acres.")
+            print(f"Your reign has ended after {self.year} years.")
+            print(f"Your final population is {self.pop}.")
+            print(f"Your final land holdings are {self.acres} acres.")
         return
 
 if __name__ == "__main__":
