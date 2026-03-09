@@ -36,7 +36,7 @@ class Hammurabi:
                 self.run_game_logic()
             self.finalSummary()
         else:
-            print("\033c\033[91mYou are not fit to rule\033[0m")
+            print("\033c\033[91mYou are not fit to rule\033[0m") 
         # declare local variables here: grain, population, etc.
         # statements go after the declarations
         self.ending = input("\nDo you want to play again? (y/n) ")
@@ -44,14 +44,17 @@ class Hammurabi:
             self.__init__()
             self.playGame()
         else:
-            print("\033cThou rest in peace, great Hammurabi. May your legacy live on forever in the annals of history.\033[0m")
+            if self.revolt or self.nofood or self.pop < 0:
+                print("\033c\033[91mThou know not how to rule, begone Tarnished\033[0m")
+            else:
+                print("\033cThou rest in peace. May your legacy live on forever in the annals of Python.\033[0m")
         return
 
     # other methods go here
 
     def intro(self):
-        print("\033c\033[92mWelcome to Hammurabi!\033[0m")
-        print("Congratulations, you are the newest ruler, elected for a ten year term of office. \nYour duties are to dispense food, direct farming, and buy and sell land as needed to support your people. \nWatch out for rat infestiations and the plague! \nGrain is the general currency, measured in bushels. The following will help you in your decisions:")
+        print("\033c\033[92mArise ye Tarnished\033[0m")
+        print("You have been volunteered as tribute as the newest ruler, elected for a ten year term of office. \nYour are to feed your people food and direct land management so the people remain happy. \nWatch out for rat infestiations and the plague! \nGrain is the general currency, measured in bushels. The following will help you in your decisions:")
         print("Each person needs at least 20 bushels of grain per year to survive. \nEach person can farm at most 10 acres of land. \nIt takes 2 bushels of grain to farm an acre of land. \nThe market price for land fluctuates yearly.")
         print("Rule wisely and you will be showered with appreciation at the end of your term. Rule poorly and you will be kicked out of office!")
         begin = input("\nAre you ready to begin? (y/n) ")
@@ -166,7 +169,7 @@ class Hammurabi:
     def starvationDeaths(self):
         # return the number of people who starve to death
         if self.bushels_to_feed < self.pop * 20:
-            self.starved = self.pop - self.bushels_to_feed // 20
+            self.starved = round((self.pop - self.bushels_to_feed // 20) * self.rand.random())
             self.uprising()
             if self.revolt:
                 return
@@ -183,7 +186,7 @@ class Hammurabi:
     
     def popgrowth(self):
         # return the number of people who immigrate to the city
-        if not self.revolt and self.starved == 0:
+        if not self.revolt and self.starved == 0 and self.pop > 0:
             self.newpop = (self.rand.randint(10, 20) * (self.acres + self.bushels_to_feed)) // (100 * self.pop) + 1
             self.pop += self.newpop
         return
@@ -193,9 +196,6 @@ class Hammurabi:
         self.harvest_rate = self.rand.randint(1, 6)
         self.harv = self.harvest_rate * self.acres_to_plant
         self.bushels += self.harv
-        print(self.bushels//20)
-        print(self.pop//4)
-        input("hold")
         if self.bushels // 20 <= self.pop // 4:
             self.nofood = True
         return
@@ -217,7 +217,7 @@ class Hammurabi:
     def printSummary(self):
         # print a summary of the current year
         if self.begin:
-            print("\033cO great Hammurabi!")
+            print("\033cO (potentially) great ruler!")
             print(f"Your reign has just begun. You are in year {self.year} of your 10 year rule.")
             print(f"You have recruited {self.pop} people to your banner.")
             print(f"You now watch over {self.acres} acres of land")
@@ -225,7 +225,7 @@ class Hammurabi:
             print(f"Land is currently worth {self.land_cost} bushels per acre.")
             print(f"May you rule wisely or suffer the consequences!")
         else:
-            print("\033cO great Hammurabi!")
+            print("\033cO (maybe) great Thing controlling the people!")
             print(f"You are in year {self.year} of your 10 year rule.")
             if self.starved != 0:
                 print(f"In the previous year {self.starved} people starved to death.")
@@ -249,11 +249,11 @@ class Hammurabi:
             print(f"Your reign has ended after {self.year} years.")
             print(f"{self.pop} people survived your regin and took control")
         elif self.nofood:
-            print("\033[91mGame Over\nThe food is a lie so the people have left\033[0m")
+            print("\033c\033[91mGame Over\nThe food is a lie so the people have left\033[0m")
             print(f"Your reign has ended after {self.year} years.")
             print(f"Your final land holdings are {self.acres} acres.")
         elif self.pop <= 0:
-            print("\033[91mGame Over\nYou are alone with only land left\033[0m")
+            print("\033c\033[91mGame Over\nYou are alone with only land left\033[0m")
             print(f"Your reign has ended after {self.year} years.")
             print(f"Your final land holdings are {self.acres} acres.")
         else:
