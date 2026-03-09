@@ -56,7 +56,7 @@ class Hammurabi:
         print("\033c\033[92mArise ye Tarnished\033[0m")
         print("You have been volunteered as tribute as the newest ruler, elected for a ten year term of office. \nYour are to feed your people food and direct land management so the people remain happy. \nWatch out for rat infestiations and the plague! \nGrain is the general currency, measured in bushels. The following will help you in your decisions:")
         print("Each person needs at least 20 bushels of grain per year to survive. \nEach person can farm at most 10 acres of land. \nIt takes 2 bushels of grain to farm an acre of land. \nThe market price for land fluctuates yearly.")
-        print("Rule wisely and you will be showered with appreciation at the end of your term. Rule poorly and you will be kicked out of office!")
+        print("Rule wisely and you will be showered with appreciation at the end of your term. \nRule poorly and you will be kicked out of office!")
         begin = input("\nAre you ready to begin? (y/n) ")
         if begin.lower() != "y":
             print("\033c\033[91mThou are not ready. Begone foul beast!\033[0m")
@@ -65,12 +65,12 @@ class Hammurabi:
 
     def run_game_logic(self):
         # run the game logic for one year
-        self.askHowManyAcresToBuy()
-        self.askHowManyAcresToSell()
         self.askHowManyBushelsToFeedPeople()
         self.starvationDeaths()
         if self.revolt:
             return
+        self.askHowManyAcresToBuy()
+        self.askHowManyAcresToSell()
         self.askHowManyAcresToPlant()
         self.plagueDeaths()
         self.grainEatenByRats()
@@ -160,7 +160,7 @@ class Hammurabi:
     def plagueDeaths(self):
         # return the number of people who die in a plague
         if self.rand.random() < 0.15:
-            self.died = self.pop // 3
+            self.died = round(self.pop * self.rand.random() // 3)
             self.pop -= self.died
         else:
             self.died = 0
@@ -255,11 +255,13 @@ class Hammurabi:
         elif self.pop <= 0:
             print("\033c\033[91mGame Over\nYou are alone with only land left\033[0m")
             print(f"Your reign has ended after {self.year} years.")
+            print(f"Your final food storage is {self.bushels} bushels")
             print(f"Your final land holdings are {self.acres} acres.")
         else:
             print("\033c\033[92mGame Over\033[0m")
             print(f"Your reign has ended after {self.year} years.")
             print(f"Your final population is {self.pop}.")
+            print(f"Your final food storage is {self.bushels} bushels")
             print(f"Your final land holdings are {self.acres} acres.")
         return
 
